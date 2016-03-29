@@ -13,6 +13,7 @@ namespace BowlingLeague
         string name;
         string lastName;
         double initialAverage;
+        double[] means;
         List<List<int>> scores;
         Team team;
 
@@ -21,6 +22,7 @@ namespace BowlingLeague
             SetName(name);
             this.team = t;
             this.initialAverage = mean;
+            means = new double[31];
             scores = new List<List<int>>();
         }
 
@@ -52,29 +54,25 @@ namespace BowlingLeague
                 string value = split[i];
                 int number;
                 // If it's an int, then it should be a valid bowling score.
-                if(int.TryParse(value, out number) && number <= 300 && number >= 0)
+                if (int.TryParse(value, out number) && number <= 300 && number >= 0)
                     replacementScores.Add(number);
+                else
+                    return -1;
             }
-
-            if (replacementScores.Count == 3)
-            {
-                scores[week] = replacementScores;
-                double mean = GetMean(week, true);
-                return mean;
-            }
-
-            // Otherwise, at least one value was not valid and we can't accept these scores.
-            return -1;
+            
+            scores[week] = replacementScores;
+            return Math.Round(UpdateMean(week));
         }
 
         public double GetMean(int week, bool toRound)
         {
             if (!IsActive())
                 return initialAverage;
-
+            
             if (toRound)
-                return Math.Round(UpdateMean(week), 2);
-            return UpdateMean(week);
+                return Math.Round(means[week], 2);
+
+            return means[week];
         }
 
         private double UpdateMean(int week)
@@ -90,8 +88,12 @@ namespace BowlingLeague
                     if (score != 0)
                         divisor++;
                 }
+                means[i] = mean / (double) divisor;
             }
-            return mean / (double) divisor;
+            
+            if (divisor == 0 || mean == 0)
+                return 0;
+            return means[week];
         }
 
         // Used for supplying initial averages - tells if a player hasn't played yet.

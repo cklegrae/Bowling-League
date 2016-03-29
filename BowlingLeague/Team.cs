@@ -10,9 +10,11 @@ namespace BowlingLeague
     [Serializable()]
     class Team
     {
-        List<Bowler> bowlers;
-        string name;
-        int id;
+        private List<Bowler> bowlers;
+        private string name;
+        private int id;
+        public double wins;
+        public double losses;
 
         public Team(string name, int id)
         {
@@ -24,6 +26,32 @@ namespace BowlingLeague
         public void AddBowler(Bowler b)
         {
             bowlers.Add(b);
+        }
+
+        public double GetTeamAverage(int week)
+        {
+            double result = 0;
+            foreach(Bowler b in bowlers)
+            {
+                result += b.GetMean(week, false);
+            }
+            return result;
+        }
+
+        // Returns the three total team scores for the week.
+        public List<int> GetTeamScores(int week)
+        {
+            List<int> weekScores = new List<int>();
+            for(int i = 0; i < 3; i++)
+            {
+                int total = 0;
+                foreach(Bowler b in bowlers)
+                {
+                    total += b.GetScores(week)[i];
+                }
+                weekScores.Add(total);
+            }
+            return weekScores;
         }
 
         // Places the replacement in the same position that the original was in to avoid label position issues. It is sorted into its own spot upon reload.

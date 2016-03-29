@@ -128,11 +128,11 @@ namespace BowlingLeague
             playerNameLabel.Content = SelectedBowler.bowler.GetName();
             initialAverageTextBox.Text = SelectedBowler.bowler.GetInitialAverage().ToString();
             meanScoreLabel.Content = SelectedBowler.bowler.GetMean(week, true).ToString();
-            scoreTextBox.Text = "";
             List<int> scores = SelectedBowler.bowler.GetScores(week);
+            string scoreText = "";
             for(int i = 0; i < 3; i++)
-                scoreTextBox.Text += scores[i] + " ";
-            scoreTextBox.Text = scoreTextBox.Text.Trim();
+                scoreText += scores[i] + " ";
+            scoreTextBox.Text = scoreText.Trim();
             scoreTextBox.SelectAll();
         }
 
@@ -253,7 +253,14 @@ namespace BowlingLeague
         // Checks and submits scores from the textbox.
         private void scoreTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
+            // A valid score [x y z] must have at least six characters.
+            if (scoreTextBox.Text.Trim().Length < 6) {
+                invalidBowler = true;
+                return;
+            }
+            
             double mean = SelectedBowler.bowler.SetScores(week, (sender as TextBox).Text); 
+            // The user has input invalid scores into the textbox.
             if(mean < 0)
             {
                 invalidBowler = true;
@@ -279,6 +286,6 @@ namespace BowlingLeague
                 invalidBowler = false;
             }
         }
-
+        
     }
 }
