@@ -1,2 +1,2 @@
-# Bowling-League
-An active rewrite to a league administration tool I created last year.
+# League-Administration
+An active rewrite of a bowling league administration tool I created last year.
