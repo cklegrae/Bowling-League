@@ -27,10 +27,22 @@ namespace BowlingLeague
             int[] handicaps = DetermineHandicap();
             List<int> teamOneScores = teams[0].GetTeamScores(week);
             List<int> teamTwoScores = teams[1].GetTeamScores(week);
-            for (int i = 0; i < 3; i++)
+            int teamOneTotal = 0;
+            int teamTwoTotal = 0;
+
+            for (int i = 0; i < 4; i++)
             {
-                teamOneScores[0] += handicaps[0];
-                teamTwoScores[1] += handicaps[1];
+                // Adds 'pinfall' game: the fourth win/loss given out is a comparison between the two team's week totals.
+                if(i == 3)
+                {
+                    teamOneScores.Add(teamOneTotal);
+                    teamTwoScores.Add(teamTwoTotal);
+                }
+
+                // Accounts for handicap. The team without a handicap will have handicap[x] be 0.
+                teamOneScores[i] += handicaps[0];
+                teamTwoScores[i] += handicaps[1];
+
                 if(teamOneScores[i] > teamTwoScores[i])
                 {
                     DelegateResult(0, 1);
@@ -45,10 +57,13 @@ namespace BowlingLeague
                     DelegateResult(0, 0.5);
                     DelegateResult(1, 0.5);
                 }
+
+                teamOneTotal += teamOneScores[i];
+                teamTwoTotal += teamTwoScores[i];
             }
         }
 
-        // Slightly simplify the tedium of administering results. 0.5 indicates a tie, where a team earns half a victory and half a loss.
+        // Give out wins or losses. 1 = victory, -1 = loss, 0.5 indicates a tie, where a team earns half a victory and half a loss.
         public void DelegateResult(int index, double result)
         {
             if (result == 0.5)

@@ -33,7 +33,8 @@ namespace BowlingLeague
             double result = 0;
             foreach(Bowler b in bowlers)
             {
-                result += b.GetMean(week, false);
+                if(b.IsActive(week))
+                    result += b.GetMean(week, false);
             }
             return result;
         }
@@ -47,7 +48,8 @@ namespace BowlingLeague
                 int total = 0;
                 foreach(Bowler b in bowlers)
                 {
-                    total += b.GetScores(week)[i];
+                    if(b.IsActive(week))
+                        total += b.GetScores(week)[i];
                 }
                 weekScores.Add(total);
             }
@@ -55,12 +57,16 @@ namespace BowlingLeague
         }
 
         // Places the replacement in the same position that the original was in to avoid label position issues. It is sorted into its own spot upon reload.
-        public bool ReplaceBowler(Bowler toBeRemoved, Bowler replacement)
+        public bool ReplaceBowler(Bowler toBeRemoved, Bowler replacement, int week)
         {
             int index = bowlers.IndexOf(toBeRemoved);
             if (index < 0)
                 return false;
             bowlers[index] = replacement;
+
+            // Removed player remains on team. This is to maintain their role in previous weeks' matchups.
+            toBeRemoved.SetInactive(week);
+            bowlers.Add(toBeRemoved);
             return true;
         }
 
@@ -75,8 +81,8 @@ namespace BowlingLeague
             return name;
         }
 
-        // Sorts by last name.
-        public void SortBowlers()
+        // Sorts by last name, places inactive bowlers out of reach of UI code.
+        public void SortBowlers(int week)
         {
             bowlers = bowlers.OrderBy(b => b.GetLastName()).ToList();
         }

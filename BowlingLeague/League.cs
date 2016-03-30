@@ -41,7 +41,7 @@ namespace BowlingLeague
                     }
                     else
                     {
-                        Bowler bowler = new Bowler(stream[i], team, 90);
+                        Bowler bowler = new Bowler(stream[i], team, 90, 0);
                         if (team != null)
                         {
                             team.AddBowler(bowler);
@@ -52,7 +52,7 @@ namespace BowlingLeague
                 // Adds final team.
                 teams.Add(team);
 
-                UpdateBowlers(true);
+                UpdateBowlers(true, 0);
             }
         }
 
@@ -80,8 +80,8 @@ namespace BowlingLeague
             }
         }
 
-        // Updates the set of bowlers after player removal. Doesn't always sort to avoid Label related ordering problems.
-        public static void UpdateBowlers(bool toBeSorted)
+        // Updates the set of bowlers after player removal and when changing weeks. Doesn't always sort to avoid Label related ordering problems.
+        public static void UpdateBowlers(bool toBeSorted, int week)
         {
             if (teams == null || teams.Count == 0)
                 return;
@@ -89,10 +89,12 @@ namespace BowlingLeague
             foreach(Team t in teams)
             {
                 if(toBeSorted)
-                    t.SortBowlers();
+                    t.SortBowlers(week);
                 for (int i = 0; i < t.GetBowlers().Count; i++)
                 {
-                    bowlers.Add(t.GetBowlerAt(i));
+                    // Don't add bowlers to this week's set if they aren't active on a team.
+                    if(t.GetBowlerAt(i).IsActive(week))
+                        bowlers.Add(t.GetBowlerAt(i));
                 }
             }
             WriteToFile();

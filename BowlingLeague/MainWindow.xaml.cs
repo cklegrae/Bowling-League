@@ -72,7 +72,7 @@ namespace BowlingLeague
                 s.Close();
                 League.teams = l.GetTeams();
                 League.matchups = l.GetMatchups();
-                League.UpdateBowlers(true);
+                League.UpdateBowlers(true, week);
                 CreateLabels();
             }
         }
@@ -97,6 +97,9 @@ namespace BowlingLeague
                     stackPanel.MaxHeight += 68;
                     foreach (Bowler bowler in team.GetBowlers())
                     {
+                        // Don't create a label for an inactive bowler.
+                        if (!bowler.IsActive(week))
+                            continue;
                         Label bowlerLabel = new Label();
                         bowlerLabel.Content = bowler.GetName();
                         bowlerLabel.BorderThickness = new Thickness(0, 1, 0, 1);
@@ -116,6 +119,13 @@ namespace BowlingLeague
                     ChangeSelection(bowlerLabels[0]);
                 }
             }
+        }
+
+        // Used when changing weeks (unimplemented).
+        private void UpdateLabels()
+        {
+            stackPanel.Children.Clear();
+            CreateLabels();
         }
 
         // Updates information panel to show the selected bowler's information.
@@ -188,6 +198,8 @@ namespace BowlingLeague
             SelectedBowler.bowler = League.bowlers[bowlerLabels.IndexOf(l)];
             l.Background = new SolidColorBrush(Colors.LightGray);
             SelectedBowler.label = l;
+
+
             Point relativePoint = l.TransformToAncestor(stackPanel).Transform(new Point(0, 0));
 
             if (relativePoint.Y >= scrollViewer.ActualHeight)
@@ -219,10 +231,10 @@ namespace BowlingLeague
             }
 
             Team team = SelectedBowler.bowler.GetTeam();
-            Bowler replacementBowler = new Bowler(replacementNameTextBox.Text, team, newAverage);
-            if (team.ReplaceBowler(SelectedBowler.bowler, replacementBowler))
+            Bowler replacementBowler = new Bowler(replacementNameTextBox.Text, team, newAverage, week);
+            if (team.ReplaceBowler(SelectedBowler.bowler, replacementBowler, week))
             {
-                League.UpdateBowlers(false);
+                League.UpdateBowlers(false, week);
                 SelectedBowler.bowler = replacementBowler;
                 SelectedBowler.label.Content = replacementBowler.GetName();
                 UpdateUI();
@@ -253,8 +265,8 @@ namespace BowlingLeague
         // Checks and submits scores from the textbox.
         private void scoreTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            // A valid score [x y z] must have at least six characters.
-            if (scoreTextBox.Text.Trim().Length < 6) {
+            // A valid score [x y z] must have at least five characters.
+            if (scoreTextBox.Text.Trim().Length < 5) {
                 invalidBowler = true;
                 return;
             }

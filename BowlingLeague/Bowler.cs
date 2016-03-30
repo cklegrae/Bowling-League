@@ -14,28 +14,38 @@ namespace BowlingLeague
         string lastName;
         double initialAverage;
         double[] means;
+        bool[] active;
         List<List<int>> scores;
         Team team;
 
-        public Bowler(string name, Team t, double mean)
+        public Bowler(string name, Team t, double mean, int startWeek)
         {
             SetName(name);
+
             this.team = t;
             this.initialAverage = mean;
-            means = new double[31];
-            scores = new List<List<int>>();
-        }
 
-        // Gets that week's scores, expands scores list as necessary.
-        public List<int> GetScores(int week)
-        {
-            while (scores.Count <= week)
+            means = new double[31];
+            active = new bool[31];
+
+            // Expand scores list.
+            scores = new List<List<int>>();
+            for(int i = 0; i < 31; i++)
             {
                 List<int> weeklyScores = new List<int>();
-                for (int i = 0; i < 3; i++)
+                for (int q = 0; q < 3; q++)
                     weeklyScores.Add(0);
                 scores.Add(weeklyScores);
+                // Sets the week for which bowler is considered active.
+                if(i >= startWeek)
+                    active[i] = true;
+                means[i] = initialAverage;
             }
+        }
+
+        // Gets that week's scores.
+        public List<int> GetScores(int week)
+        {
             return scores[week];
         }
 
@@ -65,10 +75,7 @@ namespace BowlingLeague
         }
 
         public double GetMean(int week, bool toRound)
-        {
-            if (!IsActive())
-                return initialAverage;
-            
+        {     
             if (toRound)
                 return Math.Round(means[week], 2);
 
@@ -80,7 +87,8 @@ namespace BowlingLeague
             double mean = 0;
             // If a player skips or otherwise gets a 0 in a game, then it doesn't affect his average. divisor is used to avoid counting these games.
             int divisor = 0;
-            for(int i = 0; i < scores.Count; i++)
+
+            for(int i = 1; i < scores.Count; i++)
             {
                 foreach(int score in scores[i])
                 {
@@ -88,26 +96,20 @@ namespace BowlingLeague
                     if (score != 0)
                         divisor++;
                 }
-                means[i] = mean / (double) divisor;
+                // Used to avoid problems with players who haven't done anything yet.
+                if (mean == 0 || divisor == 0)
+                    means[i] = initialAverage;
+                else
+                    means[i] = mean / (double) divisor;
             }
             
-            if (divisor == 0 || mean == 0)
-                return 0;
             return means[week];
         }
 
-        // Used for supplying initial averages - tells if a player hasn't played yet.
-        public bool IsActive()
+        // Used for dealing with player add/drops: if a player is active at 'week,' he's a valid contributor to his team's score for that week.
+        public bool IsActive(int week)
         {
-            foreach(List<int> scoreList in scores)
-            {
-                foreach (int score in scoreList)
-                {
-                    if (score > 0)
-                        return true;
-                }
-            }
-            return false;
+            return active[week];
         }
 
         public double GetInitialAverage()
@@ -140,6 +142,15 @@ namespace BowlingLeague
             this.name = name;
             this.lastName = name.Substring(this.name.IndexOf(" ") + 1);
             return true;
+        }
+
+        // Set a player to be inactive starting at startWeek.
+        public void SetInactive(int startWeek)
+        {
+            for(int i = startWeek; i < 31; i++)
+            {
+                active[i] = false;
+            }
         }
 
     }
