@@ -23,8 +23,8 @@ namespace BowlingLeague
     /// </summary>
     public partial class MainWindow : Window
     {
-        List<Label> bowlerLabels;
-        int week = 1;
+        private List<Label> bowlerLabels;
+        private int currentWeek = 1;
 
         // If at any point the bowler we're looking at is invalid for scoring reasons, this flag is true.
         bool invalidBowler;
@@ -32,7 +32,6 @@ namespace BowlingLeague
         public MainWindow()
         {
             InitializeComponent();
-            bowlerLabels = new List<Label>();
             if (File.Exists("C:\\Bowling\\league.bin"))
                 LoadData();
             else
@@ -72,7 +71,10 @@ namespace BowlingLeague
                 s.Close();
                 League.teams = l.GetTeams();
                 League.matchups = l.GetMatchups();
-                League.UpdateBowlers(true, week);
+                League.nextWeek = l.GetWeek();
+                currentWeek = l.GetWeek();
+                weekText.Text = "Week " + currentWeek;
+                League.UpdateBowlers(true, currentWeek);
                 CreateLabels();
             }
         }
@@ -80,6 +82,7 @@ namespace BowlingLeague
         // Creates the clickable labels for the sidebar.
         private void CreateLabels()
         {
+            bowlerLabels = new List<Label>();
             if (League.teams != null && League.teams.Count != 0)
             {
                 stackPanel.MaxHeight = 0;
@@ -98,7 +101,7 @@ namespace BowlingLeague
                     foreach (Bowler bowler in team.GetBowlers())
                     {
                         // Don't create a label for an inactive bowler.
-                        if (!bowler.IsActive(week))
+                        if (!bowler.IsActive(currentWeek))
                             continue;
                         Label bowlerLabel = new Label();
                         bowlerLabel.Content = bowler.GetName();
@@ -121,10 +124,11 @@ namespace BowlingLeague
             }
         }
 
-        // Used when changing weeks (unimplemented).
+        // Used when changing currentWeeks. Update bowler list and labels so they're in sync.
         private void UpdateLabels()
         {
             stackPanel.Children.Clear();
+            League.UpdateBowlers(true, currentWeek);
             CreateLabels();
         }
 
@@ -137,8 +141,8 @@ namespace BowlingLeague
             playerNameTextBox.Text = SelectedBowler.bowler.GetName();
             playerNameLabel.Content = SelectedBowler.bowler.GetName();
             initialAverageTextBox.Text = SelectedBowler.bowler.GetInitialAverage().ToString();
-            meanScoreLabel.Content = SelectedBowler.bowler.GetMean(week, true).ToString();
-            List<int> scores = SelectedBowler.bowler.GetScores(week);
+            meanScoreLabel.Content = SelectedBowler.bowler.GetMean(currentWeek, true).ToString();
+            List<int> scores = SelectedBowler.bowler.GetScores(currentWeek);
             string scoreText = "";
             for(int i = 0; i < 3; i++)
                 scoreText += scores[i] + " ";
@@ -231,10 +235,10 @@ namespace BowlingLeague
             }
 
             Team team = SelectedBowler.bowler.GetTeam();
-            Bowler replacementBowler = new Bowler(replacementNameTextBox.Text, team, newAverage, week);
-            if (team.ReplaceBowler(SelectedBowler.bowler, replacementBowler, week))
+            Bowler replacementBowler = new Bowler(replacementNameTextBox.Text, team, newAverage, currentWeek);
+            if (team.ReplaceBowler(SelectedBowler.bowler, replacementBowler, currentWeek))
             {
-                League.UpdateBowlers(false, week);
+                League.UpdateBowlers(false, currentWeek);
                 SelectedBowler.bowler = replacementBowler;
                 SelectedBowler.label.Content = replacementBowler.GetName();
                 UpdateUI();
@@ -271,7 +275,7 @@ namespace BowlingLeague
                 return;
             }
             
-            double mean = SelectedBowler.bowler.SetScores(week, (sender as TextBox).Text); 
+            double mean = SelectedBowler.bowler.SetScores(currentWeek, (sender as TextBox).Text); 
             // The user has input invalid scores into the textbox.
             if(mean < 0)
             {
@@ -288,6 +292,7 @@ namespace BowlingLeague
         {
             if (!invalidBowler)
             {
+                League.nextWeek = currentWeek + 1;
                 League.WriteToFile();
                 // PDF writer logic.
             }
@@ -298,6 +303,33 @@ namespace BowlingLeague
                 invalidBowler = false;
             }
         }
-        
+
+        private void weekButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Thirty week season, thirty weeks to click through.
+            if(weekContextMenu.Items.Count == 0)
+            {
+                for(int i = 1; i < 31; i++)
+                {
+                    MenuItem item = new MenuItem();
+                    item.Header = "Week " + i;
+                    item.Click += weekItem_Click;
+                    weekContextMenu.Items.Add(item);
+                }
+            }
+            weekContextMenu.IsOpen = true;
+        }
+
+        // Week selector code.
+        private void weekItem_Click(object sender, RoutedEventArgs e)
+        {
+            MenuItem item = sender as MenuItem;
+            String[] splitHeader = item.Header.ToString().Split(' ');
+            // Since all weeks numbers are the second word in their respective week items, currentWeek = splitHeader[1].
+            currentWeek = int.Parse(splitHeader[1]);
+            weekText.Text = item.Header.ToString();
+            SelectedBowler.bowler = null;
+            UpdateLabels();
+        }
     }
 }

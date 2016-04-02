@@ -11,6 +11,7 @@ namespace BowlingLeague
     {
         public List<Team> t;
         public List<Matchup> m;
+        public int w;
 
         public LeagueHelper()
         {
@@ -27,6 +28,11 @@ namespace BowlingLeague
             m = list;
         }
 
+        public void SetWeek(int week)
+        {
+            w = week;
+        }
+
         public List<Team> GetTeams()
         {
             return t;
@@ -35,6 +41,11 @@ namespace BowlingLeague
         public List<Matchup> GetMatchups()
         {
             return m;
+        }
+
+        public int GetWeek()
+        {
+            return w;
         }
     }
 }

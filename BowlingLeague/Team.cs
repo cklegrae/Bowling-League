@@ -81,8 +81,8 @@ namespace BowlingLeague
             return name;
         }
 
-        // Sorts by last name, places inactive bowlers out of reach of UI code.
-        public void SortBowlers(int week)
+        // Sorts by last name.
+        public void SortBowlers()
         {
             bowlers = bowlers.OrderBy(b => b.GetLastName()).ToList();
         }

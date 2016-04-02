@@ -14,6 +14,8 @@ namespace BowlingLeague
         public static List<Bowler> bowlers;
         public static List<Team> teams;
         public static List<Matchup> matchups;
+        // Set to currentWeek + 1 upon print, so that it automatically loads a new week the majority of time a new week has actually passed.
+        public static int nextWeek = 1;
 
         // Loads a new set of teams at the beginning of a season.
         public static void SetTeams(String filePath)
@@ -89,7 +91,7 @@ namespace BowlingLeague
             foreach(Team t in teams)
             {
                 if(toBeSorted)
-                    t.SortBowlers(week);
+                    t.SortBowlers();
                 for (int i = 0; i < t.GetBowlers().Count; i++)
                 {
                     // Don't add bowlers to this week's set if they aren't active on a team.
@@ -108,6 +110,7 @@ namespace BowlingLeague
                 LeagueHelper helper = new LeagueHelper();
                 helper.SetTeams(teams);
                 helper.SetMatchups(matchups);
+                helper.SetWeek(nextWeek);
                 bin.Serialize(s, helper);
                 s.Close();
             }

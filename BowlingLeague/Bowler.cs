@@ -36,7 +36,7 @@ namespace BowlingLeague
                 for (int q = 0; q < 3; q++)
                     weeklyScores.Add(0);
                 scores.Add(weeklyScores);
-                // Sets the week for which bowler is considered active.
+                // Sets the weeks for which bowler is considered active.
                 if(i >= startWeek)
                     active[i] = true;
                 means[i] = initialAverage;

@@ -9,11 +9,16 @@
     <Viewbox StretchDirection="Both" Stretch="Fill">
         <Grid  Background="#333333" Name="grid" Height="720" Width="1280">
             <Menu x:Name="menu" Background="White"  HorizontalAlignment="Left" Height="23" VerticalAlignment="Top" Width="{Binding ElementName=grid,Path=ActualWidth}">
+                <Menu.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <DockPanel HorizontalAlignment="Stretch"/>
+                    </ItemsPanelTemplate>
+                </Menu.ItemsPanel>
                 <MenuItem Name="fileButton" Header="File" HorizontalAlignment="Center" VerticalAlignment="Center" Height="23">
                     <MenuItem Name="importTeamsButton" Header="Import Teams From File" Click="importTeamsButton_Click"/>
                     <MenuItem Name="importMatchupsButton" Header="Import Matchups From File" Click="importMatchupsButton_Click"/>
                 </MenuItem>
-                <MenuItem Name="printButton" Header="Print" HorizontalAlignment="Center" VerticalAlignment="Center" Height="23" Click="printButton_Click"></MenuItem>
+                <MenuItem Name="printButton" Header="Print" HorizontalAlignment="Left" VerticalAlignment="Center" Height="23" Click="printButton_Click"></MenuItem>
             </Menu>
             <ScrollViewer Name="scrollViewer" HorizontalAlignment="Left" Height="624" Margin="30,48,0,0" VerticalAlignment="Top" Width="246">
                 <StackPanel Name="stackPanel" Height="1438" Width="217"/>
@@ -50,6 +55,18 @@
                     </Grid>
                 </TabItem>
             </TabControl>
+            <Button x:Name="weekButton" Background="White" Margin="1108,34,57,660" Click="weekButton_Click">
+                <Button.Content>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Name="weekText" Text="Week 1"/>
+                    </StackPanel>
+                </Button.Content>
+                <Button.ContextMenu>
+                    <ContextMenu Name="weekContextMenu">
+
+                    </ContextMenu>
+                </Button.ContextMenu>
+            </Button>
         </Grid>
     </Viewbox>
 </Window>
