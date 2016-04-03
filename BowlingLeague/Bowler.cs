@@ -71,7 +71,7 @@ namespace BowlingLeague
             }
             
             scores[week] = replacementScores;
-            return Math.Round(UpdateMean(week));
+            return Math.Round(UpdateMean(week), 2);
         }
 
         public double GetMean(int week, bool toRound)
@@ -87,8 +87,7 @@ namespace BowlingLeague
             double mean = 0;
             // If a player skips or otherwise gets a 0 in a game, then it doesn't affect his average. divisor is used to avoid counting these games.
             int divisor = 0;
-
-            for(int i = 1; i < scores.Count; i++)
+            for(int i = 1; i <  scores.Count; i++)
             {
                 foreach(int score in scores[i])
                 {
