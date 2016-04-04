@@ -36,17 +36,18 @@ namespace BowlingLeague
             for (int i = 0; i < 4; i++)
             {
                 // Adds 'pinfall' game: the fourth win/loss given out is a comparison between the two team's week totals.
-                if(i == 3)
+                if (i == 3)
                 {
                     teamOneScores.Add(teamOneTotal);
                     teamTwoScores.Add(teamTwoTotal);
                 }
+                else {
+                    // Accounts for handicap. The team without a handicap will have handicap[x] be 0. No handicap is applied for the pinfall game.
+                    teamOneScores[i] += handicaps[0];
+                    teamTwoScores[i] += handicaps[1];
+                }
 
-                // Accounts for handicap. The team without a handicap will have handicap[x] be 0.
-                teamOneScores[i] += handicaps[0];
-                teamTwoScores[i] += handicaps[1];
-
-                if(teamOneScores[i] > teamTwoScores[i])
+                if (teamOneScores[i] > teamTwoScores[i])
                 {
                     DelegateResult(0, 1);
                     DelegateResult(1, -1);
@@ -62,7 +63,7 @@ namespace BowlingLeague
                     DelegateResult(1, 0.5);
                 }
 
-                string resultString = String.Format("Team {0}: {1}, team {2}: {3}, week {4}", teams[0].GetName(), teamOneScores[i], teams[1].GetName(), teamTwoScores[i], week);
+                string resultString = String.Format("Team {0}: {1} ({5}), team {2}: {3} ({6}), week {4}", teams[0].GetName(), teamOneScores[i], teams[1].GetName(), teamTwoScores[i], week, handicaps[0], handicaps[1]);
                 results.Add(resultString);
 
                 teamOneTotal += teamOneScores[i];
@@ -93,12 +94,12 @@ namespace BowlingLeague
         public int[] DetermineHandicap()
         {
             int[] handicaps = new int[2];
-            double teamOneAverage = teams[0].GetTeamAverage(week);
-            double teamTwoAverage = teams[1].GetTeamAverage(week);
+            double teamOneAverage = teams[0].GetTeamAverage(week - 1);
+            double teamTwoAverage = teams[1].GetTeamAverage(week - 1);
             if (teamOneAverage < teamTwoAverage)
-                handicaps[0] = (int)Math.Floor((teamTwoAverage - teamOneAverage) * (2 / 3));
+                handicaps[0] = (int) Math.Floor((teamTwoAverage - teamOneAverage) * ((double) 2 / (double) 3));
             else
-                handicaps[1] = (int)Math.Floor((teamOneAverage - teamTwoAverage) * (2 / 3));
+                handicaps[1] = (int) Math.Floor((teamOneAverage - teamTwoAverage) * ((double) 2 / (double) 3));
             return handicaps;
         }
 
