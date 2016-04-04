@@ -102,6 +102,23 @@ namespace BowlingLeague
             WriteToFile();
         }
 
+        public static void CalculateMatchups(int week)
+        {
+            // Since the number of teams is always even, there will always be (# of teams) / 2 matchups in a week.
+            using (StreamWriter file = new StreamWriter(@"C:\Bowling\log.txt"))
+            {
+                for (int i = 0; i < (week * (teams.Count / 2)); i++)
+                {
+                    List<string> results = matchups[i].Compute();
+                    foreach(string r in results)
+                    {
+                        file.WriteLine(r);
+                    }
+                    file.WriteLine();
+                }
+            }
+        }
+
         public static void WriteToFile()
         {
             using (Stream s = File.Open("C:\\Bowling\\league.bin", FileMode.Create))

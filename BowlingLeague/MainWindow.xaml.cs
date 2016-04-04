@@ -294,6 +294,7 @@ namespace BowlingLeague
             {
                 League.nextWeek = currentWeek + 1;
                 League.WriteToFile();
+                League.CalculateMatchups(currentWeek);
                 // PDF writer logic.
             }
             else

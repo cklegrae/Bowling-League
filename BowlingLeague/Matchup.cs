@@ -22,8 +22,11 @@ namespace BowlingLeague
         }
 
         // Computes the matchup.
-        public void Compute()
+        public List<string> Compute()
         {
+            // Matchup results for logging purposes.
+            List<string> results = new List<string>();
+
             int[] handicaps = DetermineHandicap();
             List<int> teamOneScores = teams[0].GetTeamScores(week);
             List<int> teamTwoScores = teams[1].GetTeamScores(week);
@@ -47,7 +50,8 @@ namespace BowlingLeague
                 {
                     DelegateResult(0, 1);
                     DelegateResult(1, -1);
-                }else if(teamOneScores[i] < teamTwoScores[i])
+                }
+                else if(teamOneScores[i] < teamTwoScores[i])
                 {
                     DelegateResult(0, -1);
                     DelegateResult(1, 1);
@@ -58,9 +62,14 @@ namespace BowlingLeague
                     DelegateResult(1, 0.5);
                 }
 
+                string resultString = String.Format("Team {0}: {1}, team {2}: {3}, week {4}", teams[0].GetName(), teamOneScores[i], teams[1].GetName(), teamTwoScores[i], week);
+                results.Add(resultString);
+
                 teamOneTotal += teamOneScores[i];
                 teamTwoTotal += teamTwoScores[i];
             }
+
+            return results;
         }
 
         // Give out wins or losses. 1 = victory, -1 = loss, 0.5 indicates a tie, where a team earns half a victory and half a loss.
