@@ -48,8 +48,15 @@ namespace BowlingLeague
                 int total = 0;
                 foreach(Bowler b in bowlers)
                 {
-                    if(b.IsActive(week))
-                        total += b.GetScores(week)[i];
+                    if (b.IsActive(week))
+                    {
+                        int score = b.GetScores(week)[i];
+                        // A player who misses a game will contribute his (last week's) average - 5 to his team score.
+                        if (score == 0)
+                            total += (int) Math.Floor(b.GetMean(week - 1, false) - 5);
+                        else
+                            total += b.GetScores(week)[i];
+                    }
                 }
                 weekScores.Add(total);
             }

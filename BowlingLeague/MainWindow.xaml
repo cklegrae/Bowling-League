@@ -51,7 +51,7 @@
                         <Label Content="Replacement Name" FontWeight="Bold" FontSize="32" HorizontalAlignment="Left" Margin="10,39,0,0" VerticalAlignment="Top" Width="315" Height="58"/>
                         <TextBox x:Name="replacementNameTextBox" Text="OPEN SLOT" FontSize="48" FontWeight="Bold" Background="Transparent" BorderThickness="5" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Height="72" Margin="330,25,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="563"/>
                         <Label Content="Initial Average" FontWeight="Bold" FontSize="32" HorizontalAlignment="Left" Margin="10,137,0,0" VerticalAlignment="Top" Width="295" Height="61"/>
-                        <TextBox x:Name="initialAverageTextBox" Background="Transparent" FontWeight="Bold" FontSize="48" BorderThickness="5" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Height="75" Margin="330,123,0,0" TextWrapping="Wrap" Text="90.00" VerticalAlignment="Top" Width="224"/>
+                        <TextBox x:Name="initialAverageTextBox" Background="Transparent" FontWeight="Bold" FontSize="48" BorderThickness="5" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Height="75" Margin="330,123,0,0" TextWrapping="Wrap" Text="95.00" VerticalAlignment="Top" Width="224"/>
                     </Grid>
                 </TabItem>
             </TabControl>

@@ -140,7 +140,7 @@ namespace BowlingLeague
             teamNameLabel.Content = SelectedBowler.bowler.GetTeam().GetName();
             playerNameTextBox.Text = SelectedBowler.bowler.GetName();
             playerNameLabel.Content = SelectedBowler.bowler.GetName();
-            initialAverageTextBox.Text = SelectedBowler.bowler.GetInitialAverage().ToString();
+            initialAverageTextBox.Text = "95";
             meanScoreLabel.Content = SelectedBowler.bowler.GetMean(currentWeek, true).ToString();
             List<int> scores = SelectedBowler.bowler.GetScores(currentWeek);
             string scoreText = "";
@@ -223,7 +223,7 @@ namespace BowlingLeague
             if (!double.TryParse(initialAverageTextBox.Text, out newAverage) || newAverage < 0 || newAverage > 300)
             {
                 MessageBox.Show("Invalid initial average.");
-                initialAverageTextBox.Text = "90";
+                initialAverageTextBox.Text = "95";
                 return;
             }
 

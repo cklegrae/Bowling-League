@@ -40,9 +40,12 @@ namespace BowlingLeague
                 {
                     teamOneScores.Add(teamOneTotal);
                     teamTwoScores.Add(teamTwoTotal);
+
+                    // Keeping the handicaps in the pinfall score may give the mistaken impression that the pinfall, or week total, has an additional handicap added to it.
+                    handicaps[0] = 0;
+                    handicaps[1] = 0;
                 }
                 else {
-                    // Accounts for handicap. The team without a handicap will have handicap[x] be 0. No handicap is applied for the pinfall game.
                     teamOneScores[i] += handicaps[0];
                     teamTwoScores[i] += handicaps[1];
                 }

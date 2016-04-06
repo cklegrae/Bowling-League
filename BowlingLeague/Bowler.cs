@@ -57,13 +57,11 @@ namespace BowlingLeague
             if (split.Length != 3)
                 return -1;
 
-            // List that is to replace scores[week].
             List<int> replacementScores = new List<int>();
 
             for(int i = 0; i < split.Length; i++){
                 string value = split[i];
                 int number;
-                // If it's an int, then it should be a valid bowling score.
                 if (int.TryParse(value, out number) && number <= 300 && number >= 0)
                     replacementScores.Add(number);
                 else
@@ -95,7 +93,7 @@ namespace BowlingLeague
                     if (score != 0)
                         divisor++;
                 }
-                // Used to avoid problems with players who haven't done anything yet.
+
                 if (mean == 0 || divisor == 0)
                     means[i] = initialAverage;
                 else
