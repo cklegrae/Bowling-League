@@ -10,13 +10,13 @@ namespace BowlingLeague
     [Serializable()]
     class Bowler
     {
-        string name;
-        string lastName;
-        double initialAverage;
-        double[] means;
-        bool[] active;
-        List<List<int>> scores;
-        Team team;
+        private string name;
+        private string lastName;
+        private double initialAverage;
+        private double[] means;
+        private bool[] active;
+        private List<List<int>> scores;
+        private Team team;
 
         public Bowler(string name, Team t, double mean, int startWeek)
         {
@@ -28,25 +28,19 @@ namespace BowlingLeague
             means = new double[31];
             active = new bool[31];
 
-            // Expand scores list.
             scores = new List<List<int>>();
             for(int i = 0; i < 31; i++)
             {
                 List<int> weeklyScores = new List<int>();
                 for (int q = 0; q < 3; q++)
                     weeklyScores.Add(0);
+
                 scores.Add(weeklyScores);
-                // Sets the weeks for which bowler is considered active.
-                if(i >= startWeek)
+
+                if (i >= startWeek)
                     active[i] = true;
                 means[i] = initialAverage;
             }
-        }
-
-        // Gets that week's scores.
-        public List<int> GetScores(int week)
-        {
-            return scores[week];
         }
 
         // Sets the scores for that week. scores list will always be properly sized because GetScores() is always called before.
@@ -83,9 +77,8 @@ namespace BowlingLeague
         private double UpdateMean(int week)
         {
             double mean = 0;
-            // If a player skips or otherwise gets a 0 in a game, then it doesn't affect his average. divisor is used to avoid counting these games.
             int divisor = 0;
-            for(int i = 1; i <  scores.Count; i++)
+            for(int i = 1; i < scores.Count; i++)
             {
                 foreach(int score in scores[i])
                 {
@@ -103,37 +96,10 @@ namespace BowlingLeague
             return means[week];
         }
 
-        // Used for dealing with player add/drops: if a player is active at 'week,' he's a valid contributor to his team's score for that week.
-        public bool IsActive(int week)
-        {
-            return active[week];
-        }
-
-        public double GetInitialAverage()
-        {
-            return initialAverage;
-        }
-
-        public string GetName()
-        {
-            return name;
-        }
-
-        public Team GetTeam()
-        {
-            return team;
-        }
-
-        public string GetLastName()
-        {
-            return lastName;
-        }
-
         // Sets or replaces the bowler's name - it requires a first and a last name.
         public bool SetName(String name)
         {
             name = name.Trim();
-            // Name will only contain a space if there are at least two words.
             if (!name.Contains(" "))
                 return false;
             this.name = name;
@@ -148,6 +114,67 @@ namespace BowlingLeague
             {
                 active[i] = false;
             }
+        }
+
+        // Checks if a player should be included in rankings.
+        public bool IsValidForPrinting(int week)
+        {
+            if (means[week] == initialAverage)
+            {
+                if(ParticipationCounter(week) == 0)
+                    return false;
+            }
+            return true;
+        }
+
+        // Counts the number of weeks a player has physically attended.
+        public int ParticipationCounter(int week)
+        {
+            int count = 0;
+            for(int i = 1; i <= week; i++)
+            {
+                for (int q = 0; q < 3; q++)
+                {
+                    if (scores[i][q] > 0)
+                    {
+                        count++;
+                        break;
+                    }
+                }
+            }
+            return count;
+        }
+
+        // If a player is active at 'week,' he's a valid contributor to his team's score for that week.
+        public bool IsActive(int week)
+        {
+            return active[week];
+        }
+
+        // Gets that week's scores.
+        public List<int> GetScores(int week)
+        {
+            return scores[week];
+        }
+
+        public Team GetTeam()
+        {
+            return team;
+        }
+
+        public string GetName()
+        {
+            return name;
+        }
+
+        public string GetLastName()
+        {
+            return lastName;
+        }
+
+        public double GetInitialAverage()
+        {
+            return initialAverage;
         }
 
     }
