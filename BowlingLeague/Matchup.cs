@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BowlingLeague
 {
-    // Matchup represents a weekly matchup between two teams. It delegates wins, losses, and ties to its teams.
+    /// <summary> Represents a weekly matchup between two teams. It delegates wins, losses, and ties to its teams. </summary>
     [Serializable()]
     class Matchup
     {
@@ -21,15 +21,15 @@ namespace BowlingLeague
             week = currentWeek;
         }
 
-        // Computes the matchup.
+        /// <summary> Computes the matchup. </summary>
         public List<string> Compute()
         {
             // Matchup results for logging purposes.
             List<string> results = new List<string>();
 
             int[] handicaps = DetermineHandicap();
-            List<int> teamOneScores = teams[0].GetTeamScores(week);
-            List<int> teamTwoScores = teams[1].GetTeamScores(week);
+            List<int> teamOneScores = teams[0].ProcessTeamScores(week);
+            List<int> teamTwoScores = teams[1].ProcessTeamScores(week);
             int teamOneTotal = 0;
             int teamTwoTotal = 0;
 
@@ -76,7 +76,7 @@ namespace BowlingLeague
             return results;
         }
 
-        // Give out wins or losses. 1 = victory, -1 = loss, 0.5 indicates a tie, where a team earns half a victory and half a loss.
+        /// <summary> Give out wins or losses. 1 = victory, -1 = loss, 0.5 indicates a tie, where a team earns half a victory and half a loss. </summary>
         public void DelegateResult(int index, double result)
         {
             if (result == 0.5)
@@ -93,7 +93,7 @@ namespace BowlingLeague
             }
         }
 
-        // Handicap rules in this particular league: 2/3rds of the difference between team averages, rounded down.
+        /// <summary> Handicap rules in this particular league: 2/3rds of the difference between team averages, rounded down. </summary>
         public int[] DetermineHandicap()
         {
             int[] handicaps = new int[2];

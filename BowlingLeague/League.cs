@@ -17,7 +17,7 @@ namespace BowlingLeague
         // Set to currentWeek + 1 upon print, so that it automatically loads a new week the majority of time a new week has actually passed.
         public static int nextWeek = 1;
 
-        // Loads a new set of teams at the beginning of a season.
+        /// <summary> Loads a new set of teams at the beginning of a season. </summary>
         public static void SetTeams(String filePath)
         {
             teams = new List<Team>();
@@ -51,14 +51,14 @@ namespace BowlingLeague
                     }
                 }
 
-                // Adds final team.
+                /// <summary> Adds final team.
                 teams.Add(team);
 
                 UpdateBowlers(true, 0);
             }
         }
 
-        // Loads a new set of matchups at the beginning of a season. Requires teams to be set.
+        /// <summary> Loads a new set of matchups at the beginning of a season. Requires teams to be set. </summary>
         public static void SetMatchups(String filePath)
         {
             if (teams == null || teams.Count == 0)
@@ -82,7 +82,7 @@ namespace BowlingLeague
             }
         }
 
-        // Updates the set of bowlers after player removal and when changing weeks. Doesn't always sort to avoid Label related ordering problems.
+        /// <summary> Updates the set of bowlers after player removal and when changing weeks. Doesn't always sort to avoid Label related ordering problems. </summary>
         public static void UpdateBowlers(bool toBeSorted, int week)
         {
             if (teams == null || teams.Count == 0)
@@ -102,9 +102,12 @@ namespace BowlingLeague
             WriteToFile();
         }
 
+        /// <summary> Calculates matchups for the week. There will always be (# of teams) / 2 matchups per week. </summary>
         public static void CalculateMatchups(int week)
         {
-            // Since the number of teams is always even, there will always be (# of teams) / 2 matchups in a week.
+            foreach(Team team in teams)
+                team.ResetStats();
+
             using (StreamWriter file = new StreamWriter(@"C:\Bowling\log.txt"))
             {
                 for (int i = 0; i < (week * (teams.Count / 2)); i++)

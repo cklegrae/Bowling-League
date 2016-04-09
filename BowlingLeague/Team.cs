@@ -13,6 +13,8 @@ namespace BowlingLeague
         private List<Bowler> bowlers;
         private string name;
         private int id;
+        private int highSingle = 0;
+        private int highTriple = 0;
         public double wins;
         public double losses;
 
@@ -39,13 +41,16 @@ namespace BowlingLeague
             return result;
         }
 
-        // Returns the three total team scores for the week.
-        public List<int> GetTeamScores(int week)
+        /// <summary> Returns the three total team scores for the week. Updates high scores if necessary. </summary>
+        public List<int> ProcessTeamScores(int week)
         {
             List<int> weekScores = new List<int>();
+            int tripleScore = 0;
+
             for(int i = 0; i < 3; i++)
             {
                 int total = 0;
+
                 foreach(Bowler b in bowlers)
                 {
                     if (b.IsActive(week))
@@ -58,12 +63,19 @@ namespace BowlingLeague
                             total += b.GetScores(week)[i];
                     }
                 }
+
+                if (total > highSingle)
+                    highSingle = total;
+                tripleScore += total;
                 weekScores.Add(total);
             }
+
+            if (tripleScore > highTriple)
+                highTriple = tripleScore;
             return weekScores;
         }
 
-        // Places the replacement in the same position that the original was in to avoid label position issues. It is sorted into its own spot upon reload.
+        /// <summary> Places the replacement in the same position that the original was in to avoid label position issues. It is sorted into its own spot upon reload. </summary>
         public bool ReplaceBowler(Bowler toBeRemoved, Bowler replacement, int week)
         {
             int index = bowlers.IndexOf(toBeRemoved);
@@ -77,7 +89,7 @@ namespace BowlingLeague
             return true;
         }
 
-        // The id represents the team in the scheduling system referred to by the bowling league: 1 vs 6, 2 vs 4, etc.
+        /// <summary> The id represents the team in the scheduling system referred to by the bowling league: 1 vs 6, 2 vs 4, etc. </summary>
         public int GetId()
         {
             return id;
@@ -88,7 +100,7 @@ namespace BowlingLeague
             return name;
         }
 
-        // Sorts by last name.
+        /// <summary> Sorts by last name. </summary>
         public void SortBowlers()
         {
             bowlers = bowlers.OrderBy(b => b.GetLastName()).ToList();
@@ -103,5 +115,23 @@ namespace BowlingLeague
         {
             return bowlers[index];
         }
+
+        /// <summary> Returns team's highest single score or highest week score (triple). </summary>
+        public int GetHighScore(bool getTriple)
+        {
+            if (getTriple)
+                return highTriple;
+            return highSingle;
+        }
+
+        /// <summary> Resets team stats before recalculating matchups and scores. </summary>
+        public void ResetStats()
+        {
+            wins = 0;
+            losses = 0;
+            highSingle = 0;
+            highTriple = 0;
+        }
+        
     }
 }

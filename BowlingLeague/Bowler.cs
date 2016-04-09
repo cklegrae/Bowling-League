@@ -17,6 +17,8 @@ namespace BowlingLeague
         private bool[] active;
         private List<List<int>> scores;
         private Team team;
+        private int highSingle = 0;
+        private int highTriple = 0;
 
         public Bowler(string name, Team t, double mean, int startWeek)
         {
@@ -43,7 +45,7 @@ namespace BowlingLeague
             }
         }
 
-        // Sets the scores for that week. scores list will always be properly sized because GetScores() is always called before.
+        /// <summary> Sets the scores for that week. scores list will always be properly sized because GetScores() is always called before. </summary>
         public double SetScores(int week, String scoreString)
         {
             String[] split = scoreString.Trim().Split(' ');
@@ -74,6 +76,7 @@ namespace BowlingLeague
             return means[week];
         }
 
+        /// <summary> Updates bowler's mean. </summary>
         private double UpdateMean(int week)
         {
             double mean = 0;
@@ -96,7 +99,27 @@ namespace BowlingLeague
             return means[week];
         }
 
-        // Sets or replaces the bowler's name - it requires a first and a last name.
+        /// <summary> Updates bowler high scores in relation to current week. Used for reprinting of previous weeks' information. </summary>
+        public void UpdateStats(int week)
+        {
+            int triple;
+            highSingle = 0;
+            highTriple = 0;
+            for(int i = 1; i <= week; i++)
+            {
+                triple = 0;
+                foreach(int score in scores[i])
+                {
+                    triple += score;
+                    if (score > highSingle)
+                        highSingle = score;
+                }
+                if (triple > highTriple)
+                    highTriple = triple;
+            }
+        }
+
+        /// <summary> Sets or replaces the bowler's name - it requires a first and a last name. </summary>
         public bool SetName(String name)
         {
             name = name.Trim();
@@ -107,7 +130,7 @@ namespace BowlingLeague
             return true;
         }
 
-        // Set a player to be inactive starting at startWeek.
+        /// <summary> Set a player to be inactive starting at startWeek. </summary>
         public void SetInactive(int startWeek)
         {
             for(int i = startWeek; i < 31; i++)
@@ -116,7 +139,7 @@ namespace BowlingLeague
             }
         }
 
-        // Checks if a player should be included in rankings.
+        /// <summary> Checks if a player should be included in rankings. </summary>
         public bool IsValidForPrinting(int week)
         {
             if (means[week] == initialAverage)
@@ -127,7 +150,7 @@ namespace BowlingLeague
             return true;
         }
 
-        // Counts the number of weeks a player has physically attended.
+        /// <summary> Counts the number of weeks a player has physically attended. </summary>
         public int ParticipationCounter(int week)
         {
             int count = 0;
@@ -145,13 +168,12 @@ namespace BowlingLeague
             return count;
         }
 
-        // If a player is active at 'week,' he's a valid contributor to his team's score for that week.
+        /// <summary> Checks whether the player is a valid contributor to his team's score for that week. </summary>
         public bool IsActive(int week)
         {
             return active[week];
         }
 
-        // Gets that week's scores.
         public List<int> GetScores(int week)
         {
             return scores[week];
@@ -175,6 +197,14 @@ namespace BowlingLeague
         public double GetInitialAverage()
         {
             return initialAverage;
+        }
+
+        /// <summary> Returns bowler's highest single game score or single week score (triple). </summary>
+        public int GetHighScore(bool getTriple)
+        {
+            if (getTriple)
+                return highTriple;
+            return highSingle;
         }
 
     }
