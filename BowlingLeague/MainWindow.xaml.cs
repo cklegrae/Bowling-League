@@ -20,13 +20,13 @@ namespace BowlingLeague
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
-    /// </summary>
+    /// <summary>
     public partial class MainWindow : Window
     {
         private List<Label> bowlerLabels;
         private int currentWeek = 1;
 
-        // If at any point the bowler we're looking at is invalid for scoring reasons, this flag is true.
+        /// <summary> If at any point the bowler we're looking at is invalid for scoring reasons, this flag is true. </summary>
         bool invalidBowler;
 
         public MainWindow()
@@ -61,7 +61,7 @@ namespace BowlingLeague
             return null;
         }
 
-        // Loads the League through LeagueHelper.
+        /// <summary> Loads the League through LeagueHelper. </summary>
         private void LoadData()
         {
             using (Stream s = File.Open("C:\\Bowling\\league.bin", FileMode.Open))
@@ -76,10 +76,11 @@ namespace BowlingLeague
                 weekText.Text = "Week " + currentWeek;
                 League.UpdateBowlers(true, currentWeek);
                 CreateLabels();
+                LeagueStats le = new LeagueStats(currentWeek);
             }
         }
 
-        // Creates the clickable labels for the sidebar.
+        /// <summary> Creates the clickable labels for the sidebar. </summary>
         private void CreateLabels()
         {
             bowlerLabels = new List<Label>();
@@ -124,7 +125,7 @@ namespace BowlingLeague
             }
         }
 
-        // Used when changing currentWeeks. Update bowler list and labels so they're in sync.
+        /// <summary> Used when changing currentWeeks. Update bowler list and labels so they're in sync. </summary>
         private void UpdateLabels()
         {
             stackPanel.Children.Clear();
@@ -132,7 +133,7 @@ namespace BowlingLeague
             CreateLabels();
         }
 
-        // Updates information panel to show the selected bowler's information.
+        /// <summary> Updates information panel to show the selected bowler's information. </summary>
         private void UpdateUI()
         {
             if (SelectedBowler.bowler == null)
@@ -150,7 +151,7 @@ namespace BowlingLeague
             scoreTextBox.SelectAll();
         }
 
-        // Used for changing the selected bowler.
+        /// <summary> Used for changing the selected bowler. </summary>
         private void AdvanceSelection()
         {
             if (invalidBowler)
@@ -172,7 +173,7 @@ namespace BowlingLeague
                 ChangeSelection(bowlerLabels[bIndex + 1]);
         }
 
-        // The various ways of changing the selection.
+        /// <summary> The various ways of changing the selection. </summary>
         private void nextPlayerButton_Click(object sender, RoutedEventArgs e)
         {
             AdvanceSelection();
@@ -191,7 +192,7 @@ namespace BowlingLeague
             }
         }
 
-        // Highlights the chosen label and scrolls the label selection panel.
+        /// <summary> Highlights the chosen label and scrolls the label selection panel. </summary>
         private void ChangeSelection(Label l)
         {
             scoreTextBox.Focus();
@@ -214,7 +215,7 @@ namespace BowlingLeague
             UpdateUI();
         }
 
-        // Replaces the bowler with either a temporary "open slot" or a replacement bowler designated by the user.
+        /// <summary> Replaces the bowler with either a temporary "open slot" or a replacement bowler designated by the user. </summary>
         private void removePlayerButton_Click(object sender, RoutedEventArgs e)
         {
             // Add in "Are you sure?"
@@ -249,7 +250,7 @@ namespace BowlingLeague
             }
         }
 
-        // Saves changes made in the edit panel.
+        /// <summary> Saves changes made in the edit panel. </summary>
         private void updatePlayerButton_Click(object sender, RoutedEventArgs e)
         {
             if (SelectedBowler.bowler.SetName(playerNameTextBox.Text))
@@ -266,7 +267,7 @@ namespace BowlingLeague
             }
         }
 
-        // Checks and submits scores from the textbox.
+        /// <summary> Checks and submits scores from the textbox. </summary>
         private void scoreTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             // A valid score [x y z] must have at least five characters.
@@ -287,7 +288,7 @@ namespace BowlingLeague
             }
         }
 
-        // Will print to PDF the desired information.
+        /// <summary> Will print to PDF the desired information. </summary>
         private void printButton_Click(object sender, RoutedEventArgs e)
         {
             if (!invalidBowler)
@@ -295,6 +296,7 @@ namespace BowlingLeague
                 League.nextWeek = currentWeek + 1;
                 League.WriteToFile();
                 League.CalculateMatchups(currentWeek);
+                LeagueStats stats = new LeagueStats(currentWeek);
                 // PDF writer logic.
             }
             else
@@ -321,7 +323,7 @@ namespace BowlingLeague
             weekContextMenu.IsOpen = true;
         }
 
-        // Week selector code.
+        /// <summary> Week selector code. </summary>
         private void weekItem_Click(object sender, RoutedEventArgs e)
         {
             MenuItem item = sender as MenuItem;

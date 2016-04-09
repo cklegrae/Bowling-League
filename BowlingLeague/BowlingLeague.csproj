@@ -58,6 +58,7 @@
     </ApplicationDefinition>
     <Compile Include="League.cs" />
     <Compile Include="LeagueHelper.cs" />
+    <Compile Include="LeagueStats.cs" />
     <Compile Include="Matchup.cs" />
     <Compile Include="SelectedBowler.cs" />
     <Compile Include="Team.cs" />
