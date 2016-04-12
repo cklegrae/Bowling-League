@@ -19,8 +19,9 @@ namespace BowlingLeague
         private Team team;
         private int highSingle = 0;
         private int highTriple = 0;
+        private bool isOpenSlot;
 
-        public Bowler(string name, Team t, double mean, int startWeek)
+        public Bowler(string name, Team t, double mean, int startWeek, bool isOpenSlot)
         {
             SetName(name);
 
@@ -42,6 +43,7 @@ namespace BowlingLeague
                 if (i >= startWeek)
                     active[i] = true;
                 means[i] = initialAverage;
+                this.isOpenSlot = isOpenSlot;
             }
         }
 
@@ -193,6 +195,12 @@ namespace BowlingLeague
         {
             return lastName;
         }
+        
+        public void SetInitialAverage(double avg)
+        {
+            initialAverage = avg;
+            UpdateMean(30);
+        }
 
         public double GetInitialAverage()
         {
@@ -205,6 +213,11 @@ namespace BowlingLeague
             if (getTriple)
                 return highTriple;
             return highSingle;
+        }
+
+        public bool IsOpenSlot()
+        {
+            return isOpenSlot;
         }
 
     }

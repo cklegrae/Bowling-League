@@ -43,7 +43,7 @@ namespace BowlingLeague
                     }
                     else
                     {
-                        Bowler bowler = new Bowler(stream[i], team, 90, 0);
+                        Bowler bowler = new Bowler(stream[i], team, 90, 0, false);
                         if (team != null)
                         {
                             team.AddBowler(bowler);

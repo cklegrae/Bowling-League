@@ -55,12 +55,24 @@ namespace BowlingLeague
                 {
                     if (b.IsActive(week))
                     {
-                        int score = b.GetScores(week)[i];
-                        // A player who misses a game will contribute his (last week's) average - 5 to his team score.
-                        if (score == 0)
-                            total += (int) Math.Floor(b.GetMean(week - 1, false) - 5);
+                        // An open roster slot always contributes 90 points.
+                        if (b.IsOpenSlot())
+                        {
+                            total += 90;
+                        }
                         else
-                            total += b.GetScores(week)[i];
+                        {
+                            int score = b.GetScores(week)[i];
+                            // A player who misses a game will contribute his (last week's) average - 5 to his team score.
+                            if (score == 0)
+                            {
+                                total += (int)Math.Floor(b.GetMean(week - 1, false) - 5);
+                            }
+                            else
+                            {
+                                total += b.GetScores(week)[i];
+                            }
+                        }
                     }
                 }
 

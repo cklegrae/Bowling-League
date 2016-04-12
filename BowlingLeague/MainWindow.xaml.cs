@@ -141,7 +141,8 @@ namespace BowlingLeague
             teamNameLabel.Content = SelectedBowler.bowler.GetTeam().GetName();
             playerNameTextBox.Text = SelectedBowler.bowler.GetName();
             playerNameLabel.Content = SelectedBowler.bowler.GetName();
-            initialAverageTextBox.Text = "95";
+            playerInitialAverageTextBox.Text = SelectedBowler.bowler.GetInitialAverage().ToString();
+            replacementInitialAverageTextBox.Text = "90";
             meanScoreLabel.Content = SelectedBowler.bowler.GetMean(currentWeek, true).ToString();
             List<int> scores = SelectedBowler.bowler.GetScores(currentWeek);
             string scoreText = "";
@@ -215,16 +216,15 @@ namespace BowlingLeague
             UpdateUI();
         }
 
-        /// <summary> Replaces the bowler with either a temporary "open slot" or a replacement bowler designated by the user. </summary>
+        /// <summary> Replaces the bowler with either an "open slot" or a replacement bowler designated by the user. </summary>
         private void removePlayerButton_Click(object sender, RoutedEventArgs e)
         {
             // Add in "Are you sure?"
 
-            double newAverage;
-            if (!double.TryParse(initialAverageTextBox.Text, out newAverage) || newAverage < 0 || newAverage > 300)
+            if (!CheckAverage(replacementInitialAverageTextBox.Text))
             {
                 MessageBox.Show("Invalid initial average.");
-                initialAverageTextBox.Text = "95";
+                replacementInitialAverageTextBox.Text = "90";
                 return;
             }
 
@@ -236,7 +236,7 @@ namespace BowlingLeague
             }
 
             Team team = SelectedBowler.bowler.GetTeam();
-            Bowler replacementBowler = new Bowler(replacementNameTextBox.Text, team, newAverage, currentWeek);
+            Bowler replacementBowler = new Bowler(replacementNameTextBox.Text, team, Double.Parse(replacementInitialAverageTextBox.Text), currentWeek, (bool) openSlotCheckBox.IsChecked);
             if (team.ReplaceBowler(SelectedBowler.bowler, replacementBowler, currentWeek))
             {
                 League.UpdateBowlers(false, currentWeek);
@@ -253,16 +253,18 @@ namespace BowlingLeague
         /// <summary> Saves changes made in the edit panel. </summary>
         private void updatePlayerButton_Click(object sender, RoutedEventArgs e)
         {
-            if (SelectedBowler.bowler.SetName(playerNameTextBox.Text))
+            if (SelectedBowler.bowler.SetName(playerNameTextBox.Text) && CheckAverage(playerInitialAverageTextBox.Text))
             {
+                SelectedBowler.bowler.SetInitialAverage(Double.Parse(playerInitialAverageTextBox.Text));
                 MessageBox.Show(playerNameTextBox.Text + " updated.");
                 SelectedBowler.label.Content = SelectedBowler.bowler.GetName();
+                League.UpdateBowlers(false, currentWeek);
                 UpdateUI();
                 League.WriteToFile();
             }
             else
             {
-                MessageBox.Show("Name not valid.");
+                MessageBox.Show("Name or average not valid.");
                 playerNameTextBox.Text = SelectedBowler.bowler.GetName();
             }
         }
@@ -309,7 +311,6 @@ namespace BowlingLeague
 
         private void weekButton_Click(object sender, RoutedEventArgs e)
         {
-            // Thirty week season, thirty weeks to click through.
             if(weekContextMenu.Items.Count == 0)
             {
                 for(int i = 1; i < 31; i++)
@@ -333,6 +334,34 @@ namespace BowlingLeague
             weekText.Text = item.Header.ToString();
             SelectedBowler.bowler = null;
             UpdateLabels();
+        }
+
+        /// <summary> Toggles valid textboxes when removing players. </summary>
+        private void openSlotCheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            bool isChecked = (bool) openSlotCheckBox.IsChecked;
+            SolidColorBrush background = new SolidColorBrush(Colors.White);
+
+            if (isChecked)
+            {
+                replacementNameTextBox.Text = "OPEN SLOT";
+                replacementInitialAverageTextBox.Text = "90";
+                background.Color = Colors.LightGray;
+            }
+
+            replacementNameTextBox.IsReadOnly = isChecked;
+            replacementInitialAverageTextBox.IsReadOnly = isChecked;
+            replacementNameTextBox.Background = background;
+            replacementInitialAverageTextBox.Background = background;
+        }
+
+        /// <summary> Checks that averages are valid. </summary>
+        private bool CheckAverage(string avg)
+        {
+            double value;
+            if (!Double.TryParse(avg, out value) || value >= 300 || value < 0)
+                return false;
+            return true;
         }
     }
 }
