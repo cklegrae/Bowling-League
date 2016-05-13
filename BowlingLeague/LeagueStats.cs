@@ -37,7 +37,7 @@ namespace BowlingLeague
         /// <summary> Gets bowlers list ranked by highest single of the week. </summary>
         public List<Bowler> GetWeekHighBowlers()
         {
-            return bowlers.OrderBy(b => -b.GetScores(week).Max()).ToList();
+            return bowlers.OrderBy(b => -b.GetScores(week - 1).Max()).ToList();
         }
 
         /// <summary> Gets teams list ranked by highest week single or triple according to bool parameter. </summary>

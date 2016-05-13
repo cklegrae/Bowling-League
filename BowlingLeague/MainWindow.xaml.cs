@@ -299,7 +299,7 @@ namespace BowlingLeague
                 League.WriteToFile();
                 League.CalculateMatchups(currentWeek);
                 LeagueStats stats = new LeagueStats(currentWeek);
-                // PDF writer logic.
+                RecordWriter.Write(currentWeek);
             }
             else
             {

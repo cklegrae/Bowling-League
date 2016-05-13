@@ -11,7 +11,7 @@ namespace BowlingLeague
     class Matchup
     {
         int week;
-        List<Team> teams;
+        public List<Team> teams;
 
         public Matchup(Team teamOne, Team teamTwo, int currentWeek)
         {
