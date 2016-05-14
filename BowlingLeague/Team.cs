@@ -144,6 +144,5 @@ namespace BowlingLeague
             highSingle = 0;
             highTriple = 0;
         }
-        
     }
 }
