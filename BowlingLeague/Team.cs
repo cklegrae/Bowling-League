@@ -33,12 +33,16 @@ namespace BowlingLeague
         public double GetTeamAverage(int week)
         {
             double result = 0;
+            double count = 0;
             foreach(Bowler b in bowlers)
             {
-                if(b.IsActive(week))
+                if (b.IsActive(week))
+                {
                     result += b.GetMean(week, false);
+                    count++;
+                }
             }
-            return result;
+            return result / count;
         }
 
         /// <summary> Returns the three total team scores for the week. Updates high scores if necessary. </summary>
