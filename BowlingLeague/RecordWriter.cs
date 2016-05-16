@@ -102,8 +102,8 @@ namespace BowlingLeague
             for(int i = 0; i < League.teams.Count; i++)
             {
                 Team team = stats.GetRankedTeams()[i];
-                teamTable.AppendChild(HtmlNode.CreateNode("<tr><td>" + i + "</td><td>" + team.GetName() + "</td><td>" + team.wins + "</td><td>" + team.losses + "</td><td>" + 
-                    (stats.GetRankedTeams()[0].wins - team.wins) + "</td><td>" + team.GetTeamAverage(week) + "</td></tr>"));
+                teamTable.AppendChild(HtmlNode.CreateNode("<tr><td>" + (i + 1) + "</td><td>" + team.GetName() + "</td><td>" + team.wins + "</td><td>" + team.losses + "</td><td>" + 
+                    (stats.GetRankedTeams()[0].wins - team.wins) + "</td><td>" + Math.Round(team.GetTeamAverage(week), 2) + "</td></tr>"));
             }
         }
 
@@ -132,6 +132,8 @@ namespace BowlingLeague
                     string bowlerRow = String.Format("<tr><td>{0}</td><td>{1}</td><td></td><td></td><td></td><td></td></tr>", bowlers[q].GetName(), bowlers[q].GetMean(week + 1, true));
                     table.AppendChild(HtmlNode.CreateNode(bowlerRow));
                 }
+                string averageTotalRow = String.Format("<tr><td></td><td>{0}</td><td></td><td></td><td></td><td></td></tr>", Math.Round(matchup.teams[i].GetTeamAverage(week + 1), 2));
+                table.AppendChild(HtmlNode.CreateNode(averageTotalRow));
 
                 string handicapString;
                 if(handicaps[i] > 0)
