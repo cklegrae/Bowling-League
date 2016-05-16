@@ -25,10 +25,13 @@ namespace BowlingLeague
             
             document.Load(@"./scoreCardTemplate.html");
 
+            HtmlNode body = document.GetElementbyId("div");
             for (int i = 0; i < League.teams.Count / 2; i++)
             {
                 Matchup matchup = League.matchups[week * League.teams.Count / 2 + i];
-                WriteMatchupPage(document, stats, week, matchup);
+                if (i > 0)
+                    body.AppendChild(HtmlNode.CreateNode("<div class=\"pagebreak\"></div>"));
+                WriteMatchupPage(document, stats, week, matchup, body);
             }
 
             document.Save(@"C:\\Bowling\Records\cardsWeek" + week + ".html");
@@ -104,10 +107,9 @@ namespace BowlingLeague
             }
         }
 
-        /// <summary> Places in team stats for this week's matchups, each on individual pages. </summary>
-        private static void WriteMatchupPage(HtmlDocument document, LeagueStats stats, int week, Matchup matchup)
+        /// <summary> Places in HTML for team stats for this week's matchups, each on individual pages. </summary>
+        private static void WriteMatchupPage(HtmlDocument document, LeagueStats stats, int week, Matchup matchup, HtmlNode body)
         {
-            var body = document.GetElementbyId("div");
             body.AppendChild(HtmlNode.CreateNode("<br>"));
             body.AppendChild(HtmlNode.CreateNode("<table id=\"headerTable\" style=\"text-align: center; border-collapse: collapse; height: 100%; width: 100%;\" border=\"1\" cellpadding=\"2\" cellspacing=\"2\"><tbody><tr><td>Week " + (week + 1) + "</td></tr></tbody></table>"));
             body.AppendChild(HtmlNode.CreateNode("<br>"));
@@ -116,26 +118,31 @@ namespace BowlingLeague
 
             for (int i = 0; i < 2; i++)
             {
-                Console.WriteLine(matchup.teams[i] + " with handicap of " + handicaps[i] + " with avg of " + matchup.teams[i].GetTeamAverage(week + 1));
-                body.AppendChild(HtmlNode.CreateNode("<table id=\"" + matchup.teams[i].GetName() + "\" style=\"text-align: center; border-collapse: collapse; height: 100%; width: 100%;\" border=\"1\" cellpadding=\"2\" cellspacing=\"2\"><col style=\"width: 35%;\"><col style=\"width: 20%;\"><col style=\"width: 10%;\"><col style=\"width: 10%;\"><col style=\"width: 10%;\"><col style=\"width: 15%;\"></table>"));
-                var table = document.GetElementbyId(matchup.teams[i].GetName());
+                body.AppendChild(HtmlNode.CreateNode("<br>"));
+                HtmlNode table = HtmlNode.CreateNode("<table id=\"" + matchup.teams[i].GetName() + "\" style=\"text-align: center; border-collapse: collapse; height: 100%; width: 100%;\" border=\"1\" cellpadding=\"3\" cellspacing=\"4\"><col style=\"width: 40%;\"><col style=\"width: 15%;\"><col style=\"width: 10%;\"><col style=\"width: 10%;\"><col style=\"width: 10%;\"><col style=\"width: 15%;\"></table>");
+                body.AppendChild(table);
+
                 table.AppendChild(HtmlNode.CreateNode("<tr><td colspan = \"2\">Team " + matchup.teams[i].GetName() + "</td><td colspan = \"4\"></td></tr>"));
                 table.AppendChild(HtmlNode.CreateNode("<tr><td>NAME</td><td>AVG</td><td>1</td><td>2</td><td>3</td><td>TOTAL</td></tr>"));
-                List<Bowler> bowlers = matchup.teams[i].GetBowlers();
 
+                List<Bowler> bowlers = new List<Bowler>(matchup.teams[i].GetBowlers());
+                bowlers = bowlers.OrderBy(b => b.GetMean(week + 1, false)).ToList();
                 for (int q = 0; q < bowlers.Count; q++)
                 {
-                    // Not yet implemented.
+                    string bowlerRow = String.Format("<tr><td>{0}</td><td>{1}</td><td></td><td></td><td></td><td></td></tr>", bowlers[q].GetName(), bowlers[q].GetMean(week + 1, true));
+                    table.AppendChild(HtmlNode.CreateNode(bowlerRow));
                 }
 
-                string handicapString = String.Format("<tr><td colspan = \"2\">HANDICAP</td><td>{0}</td><td>{0}</td><td>{0}</td><td>{1}</td></tr>", handicaps[i], handicaps[i] * 3);
+                string handicapString;
+                if(handicaps[i] > 0)
+                    handicapString = String.Format("<tr><td colspan = \"2\">HANDICAP</td><td>{0}</td><td>{0}</td><td>{0}</td><td>{1}</td></tr>", handicaps[i], handicaps[i] * 3);
+                else
+                    handicapString = "<tr><td colspan = \"2\">HANDICAP</td><td></td><td></td><td></td><td></td></tr>";
                 table.AppendChild(HtmlNode.CreateNode(handicapString));
 
                 table.AppendChild(HtmlNode.CreateNode("<tr><td colspan = \"2\">TEAM TOTAL</td><td></td><td></td><td></td><td></td></tr></tbody>"));
-                body.AppendChild(HtmlNode.CreateNode("<br><br><br>"));
+                body.AppendChild(HtmlNode.CreateNode("<br>"));
             }
-
-            body.AppendChild(HtmlNode.CreateNode("<div class=\"pagebreak\"></div>"));
         } 
 
         /// <summary> Fills in table entries related to bowler stats. </summary>
