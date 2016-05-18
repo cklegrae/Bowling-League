@@ -1,2 +1,2 @@
 # League-Administration
-An active rewrite of a bowling league administration tool I created last year.
+A league administration tool currently being used by a local bowling league. Player scores are input weekly using a simple UI and printable records are created from the data.
